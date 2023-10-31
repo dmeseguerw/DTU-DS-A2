@@ -20,6 +20,10 @@ public class ClientImpl {
         return sessionToken;
     }
 
+    public static void logout(PrintInterface stub, String token) throws RemoteException {
+        System.out.println(stub.logout(token));
+    }
+
     public static void print(String filename, String printer, String token, PrintInterface stub) throws RemoteException {
         System.out.println(stub.print(filename, printer, token));
     }

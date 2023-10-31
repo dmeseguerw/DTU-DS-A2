@@ -6,8 +6,9 @@ import java.rmi.RemoteException;
 
 // Creating Remote interface for our application
 public interface PrintInterface extends Remote {
-
     String login(String username, String password) throws RemoteException, FileNotFoundException;
+
+    String logout(String token) throws RemoteException;
     String print(String filename, String printer, String token) throws RemoteException;
     String queue(String printer, String token) throws RemoteException;
     String topQueue(String printer, int job, String token) throws RemoteException;

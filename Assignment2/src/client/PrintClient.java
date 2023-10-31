@@ -19,7 +19,7 @@ public class PrintClient extends ClientImpl{
 
 //            Scanner scanner = new Scanner(System.in);
             String sessionToken = login(stub);
-//            start(sessionToken,stub);
+            start(sessionToken,stub);
             print("f2","p1",sessionToken,stub);
             queue("p1", sessionToken, stub);
             topQueue("p1",0, sessionToken,stub);
@@ -28,7 +28,7 @@ public class PrintClient extends ClientImpl{
             setConfig("param","v1",sessionToken,stub);
 //            restart(sessionToken,stub);
 //            stop(sessionToken,stub);
-
+            logout(stub,sessionToken);
 
 //            while (true) {
 //                System.out.println("Choose an option:");

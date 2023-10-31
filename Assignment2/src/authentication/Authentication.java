@@ -10,7 +10,7 @@ import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class Authentication extends AuthImpl {
+public class Authentication {
 
     public static Map<String, String> getPwdHashMap() throws RemoteException, FileNotFoundException {
         // Create hash

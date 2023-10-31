@@ -22,6 +22,16 @@ public class PrintImp implements PrintInterface {
         return null;
     }
 
+    public String logout(String token) throws RemoteException {
+        String ret_statement = "Not logged in";
+        if(Authentication.authSession(token)) {
+            session.removeSessionToken(token);
+            ret_statement = "Logged out";
+        }
+        System.out.println(ret_statement);
+        return ret_statement;
+    }
+
 
     public String print(String filename, String printer, String token) {
         String ret_statement = "Operation failed";
@@ -36,6 +46,7 @@ public class PrintImp implements PrintInterface {
                 }
             }
         }
+        System.out.println(ret_statement);
         return ret_statement;
     }
 
@@ -54,6 +65,7 @@ public class PrintImp implements PrintInterface {
                 }
             }
         }
+        System.out.println(queue);
         return queue;
     }
 
@@ -70,6 +82,7 @@ public class PrintImp implements PrintInterface {
             }
             ret_statement = "Job " + job + " in printer " + printer + " moved to the top";
         }
+        System.out.println(ret_statement);
         return ret_statement;
     }
 
@@ -89,6 +102,7 @@ public class PrintImp implements PrintInterface {
             printers.add(p4);
             ret_statement = "Printer server started";
         }
+        System.out.println(ret_statement);
         return ret_statement;
     }
 
@@ -99,6 +113,7 @@ public class PrintImp implements PrintInterface {
         if(Authentication.authSession(token)) {
             ret_statement = "Print server stopped";
         }
+        System.out.println(ret_statement);
         return ret_statement;
     }
 
@@ -113,6 +128,7 @@ public class PrintImp implements PrintInterface {
             }
             ret_statement = "Print server restarted";
         }
+        System.out.println(ret_statement);
         return ret_statement;
     }
 
@@ -129,6 +145,7 @@ public class PrintImp implements PrintInterface {
                 }
             }
         }
+        System.out.println(ret_statement);
         return ret_statement;
     }
 
@@ -139,6 +156,7 @@ public class PrintImp implements PrintInterface {
         if(Authentication.authSession(token)) {
             ret_statement = "GET CONFIG FROM SERVER PRINTER";
         }
+        System.out.println(ret_statement);
         return ret_statement;
 
     }
@@ -150,6 +168,7 @@ public class PrintImp implements PrintInterface {
         if(Authentication.authSession(token)) {
             ret_statement = "GET CONFIG FROM SERVER PRINTER";
         }
+        System.out.println(ret_statement);
         return ret_statement;
     }
 }

@@ -24,6 +24,7 @@ public class Sessions {
     }
 
     public void removeSessionToken(String token){
+        System.out.println("Session for user " + usersTokens.get(token) + " removed");
         usersTokens.remove(token);
     }
 
