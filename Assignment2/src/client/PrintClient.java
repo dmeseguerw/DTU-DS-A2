@@ -36,8 +36,8 @@ public class PrintClient {
             System.out.println("8. Read configuration of server");
             System.out.println("9. Set configuration of server");
             System.out.println("10. Logout");
-            System.out.println("11. Exit\n");
-            System.out.println("Login");
+            System.out.println("11. Exit");
+            System.out.println("12. Login");
 
             System.out.print("Enter your choice: ");
 
@@ -80,6 +80,7 @@ public class PrintClient {
                     break;
                 case 12:
                     login(stub);
+                    break;
                 default:
                     System.out.println("Invalid choice. Please choose a valid option.");
                     break;
