@@ -2,6 +2,8 @@ package services;
 
 import authentication.Authentication;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.HashMap;
@@ -22,7 +24,6 @@ public class Sessions extends Authentication {
     public void addNewUserSession(String token, String username){
         System.out.println("New token added");
         usersTokens.put(token, username);
-
         long expTime = System.currentTimeMillis() + SESSION_TIMEOUT;
         tokensExpiration.put(token,expTime);
     }
@@ -37,9 +38,10 @@ public class Sessions extends Authentication {
         tokensExpiration.remove(token);
     }
 
-    public boolean verifyActiveSession(String token){
+    public boolean verifyActiveSession(String token,String operation){
+        createLogFile(usersTokens.get(token),operation);
         if(usersTokens.get(token) != null){
-            if(tokensExpiration.get(token) != null & tokensExpiration.get(token) < System.currentTimeMillis()) {
+            if(tokensExpiration.get(token) != null & tokensExpiration.get(token) > System.currentTimeMillis()) {
                 return true; // Token is valid and not expired
             }
             // Token is valid but expired
@@ -47,5 +49,14 @@ public class Sessions extends Authentication {
             return false;
         }
         return false; // Token is not valid
+    }
+
+    public void createLogFile(String username,String operation)  {
+        try (FileWriter fileWriter = new FileWriter("LOGS/"+username+"_LOG.txt",true)) {
+            fileWriter.write(operation + " operation performed - Time: " + System.currentTimeMillis()+"\n");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
     }
 }

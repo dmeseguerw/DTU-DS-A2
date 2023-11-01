@@ -23,7 +23,7 @@ public class PrintServer implements PrintInterface {
 
     public String logout(String token) throws RemoteException {
         String ret_statement = "Not logged in";
-        if(session.verifyActiveSession(token)) {
+        if(session.verifyActiveSession(token,"logout")) {
             session.removeSessionToken(token);
             ret_statement = "Logged out";
         }
@@ -34,7 +34,7 @@ public class PrintServer implements PrintInterface {
 
     public String print(String filename, String printer, String token) {
         String ret_statement = "Operation failed";
-        if(session.verifyActiveSession(token)){
+        if(session.verifyActiveSession(token,"print")){
             ret_statement = "";
             for (Printer p : printers){
                 if(p.getPrinterName().equals(printer)){
@@ -53,7 +53,7 @@ public class PrintServer implements PrintInterface {
 
     public String queue(String printer, String token) {
         String queue = "Operation failed";
-        if(session.verifyActiveSession(token)){
+        if(session.verifyActiveSession(token,"queue")){
             queue = "";
             for (Printer p : printers) {
                 if (p.getPrinterName().equals(printer)) {
@@ -72,7 +72,7 @@ public class PrintServer implements PrintInterface {
 
     public String topQueue(String printer, int job, String token) {
         String ret_statement = "Operation failed";
-        if(session.verifyActiveSession(token)){
+        if(session.verifyActiveSession(token,"topQueue")){
             for (Printer p : printers) {
                 if (p.getPrinterName().equals(printer)) {
                     p.moveTopQueue(job);
@@ -89,7 +89,7 @@ public class PrintServer implements PrintInterface {
 
     public String start(String token) {
         String ret_statement = "Operation failed";
-        if(session.verifyActiveSession(token)){
+        if(session.verifyActiveSession(token,"start")){
             // Start database and initialize printers
             Printer p1 = new Printer("p1");
             Printer p2 = new Printer("p2");
@@ -109,7 +109,7 @@ public class PrintServer implements PrintInterface {
 
     public String stop(String token) {
         String ret_statement = "Operation failed";
-        if(session.verifyActiveSession(token)){
+        if(session.verifyActiveSession(token,"stop")){
             ret_statement = "Print server stopped";
         }
         System.out.println(ret_statement);
@@ -121,7 +121,7 @@ public class PrintServer implements PrintInterface {
     public String restart(String token) {
         String ret_statement = "Operation failed";
 //        System.out.println("stops the print server, clears the print queue and starts the print server again");
-        if(session.verifyActiveSession(token)){
+        if(session.verifyActiveSession(token,"restart")){
             for (Printer p : printers) {
                 p.clearQueue();
             }
@@ -136,7 +136,7 @@ public class PrintServer implements PrintInterface {
     public String status(String printer, String token) {
         String ret_statement = "Operation failed";
         System.out.println("prints status of printer on the user's display");
-        if(session.verifyActiveSession(token)){
+        if(session.verifyActiveSession(token,"status")){
             for (Printer p : printers) {
                 if (p.getPrinterName().equals(printer)) {
                     ret_statement = p.getstatus();
@@ -152,7 +152,7 @@ public class PrintServer implements PrintInterface {
 
     public String readConfig(String parameter, String token) {
         String ret_statement = "Operation failed";
-        if(session.verifyActiveSession(token)){
+        if(session.verifyActiveSession(token,"readConfig")){
             ret_statement = "GET CONFIG FROM SERVER PRINTER";
         }
         System.out.println(ret_statement);
@@ -164,7 +164,7 @@ public class PrintServer implements PrintInterface {
 
     public String setConfig(String parameter, String value, String token) {
         String ret_statement = "Operation failed";
-        if(session.verifyActiveSession(token)){
+        if(session.verifyActiveSession(token,"setConfig")){
             ret_statement = "GET CONFIG FROM SERVER PRINTER";
         }
         System.out.println(ret_statement);
