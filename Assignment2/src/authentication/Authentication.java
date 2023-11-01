@@ -1,7 +1,5 @@
 package authentication;
 
-import services.Sessions;
-
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -12,7 +10,7 @@ import java.util.Map;
 
 public class Authentication {
 
-    public static Map<String, String> getPwdHashMap() throws RemoteException, FileNotFoundException {
+    public Map<String, String> getPwdHashMap() throws RemoteException, FileNotFoundException {
         // Create hash
         Map<String, String> map = new HashMap<String, String>();
 
@@ -39,7 +37,7 @@ public class Authentication {
         return map;
     }
 
-    public static boolean authUser(String username, String password) throws RemoteException, FileNotFoundException {
+    public  boolean authUser(String username, String password) throws RemoteException, FileNotFoundException {
         Map<String, String> pwd_hash = getPwdHashMap();
 
         if(!pwd_hash.containsKey(username)){
@@ -67,13 +65,7 @@ public class Authentication {
 
     }
 
-    public static boolean authSession(String token){
-        if(Sessions.verifyActiveSession(token)) System.out.println("Authorized session");
-        else System.out.println("Unauthorized session");
-        return Sessions.verifyActiveSession(token);
-    }
 
-
-    private static final String pwd_file = "user_passwords_file.txt";
+    private final String pwd_file = "user_passwords_file.txt";
 
 }

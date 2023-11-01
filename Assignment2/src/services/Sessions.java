@@ -1,11 +1,13 @@
 package services;
 
+import authentication.Authentication;
+
 import java.security.SecureRandom;
 import java.util.Base64;
 import java.util.HashMap;
 
-public class Sessions {
-    private static HashMap<String,String> usersTokens = new HashMap<>();
+public class Sessions extends Authentication {
+    private HashMap<String,String> usersTokens = new HashMap<>();
 
     public String generateToken(){
         SecureRandom secureRandom = new SecureRandom();
@@ -28,7 +30,7 @@ public class Sessions {
         usersTokens.remove(token);
     }
 
-    public static boolean verifyActiveSession(String token){
+    public boolean verifyActiveSession(String token){
         return (usersTokens.get(token) != null);
     }
 }
