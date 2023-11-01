@@ -1,11 +1,13 @@
 import client.PrintClient;
 import printinterface.PrintInterface;
 
+import java.io.IOException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
 public class RunClient {
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+//        PasswordGenerator.hashPasswords(); //Generate hashed PWDs file
         try {
             // Getting the registry
             Registry registry = LocateRegistry.getRegistry(null);

@@ -1,5 +1,7 @@
 package authentication;
 
+import BCrypt.BCrypt;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -46,26 +48,18 @@ public class Authentication {
         }
 
         String user_password = pwd_hash.get(username);
-
-        try {
-            if (password.equals(user_password)) {
-                System.out.println("User authenticated correctly");
-                return true;
-            }
-            else{
-                System.out.println("User authentication failed");
-                return false;
-            }
+        if (BCrypt.checkpw(password,user_password)) {
+            System.out.println("User authenticated correctly");
+            return true;
         }
-        catch (Exception e) {
-            System.out.println("Error in user authentication");
-            e.printStackTrace();
+        else{
+            System.out.println("User authentication failed");
             return false;
         }
 
     }
 
 
-    private final String pwd_file = "user_passwords_file.txt";
+    private final String pwd_file = "hashed_PWDs.txt";
 
 }

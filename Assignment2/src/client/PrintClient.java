@@ -9,6 +9,7 @@ import java.util.Scanner;
 public class PrintClient {
     private String sessionToken;
 
+
     public void UserMenu(PrintInterface stub) throws FileNotFoundException, RemoteException {
         Scanner scanner = new Scanner(System.in);
         boolean run = true;
@@ -36,6 +37,7 @@ public class PrintClient {
             System.out.println("9. Set configuration of server");
             System.out.println("10. Logout");
             System.out.println("11. Exit\n");
+            System.out.println("Login");
 
             System.out.print("Enter your choice: ");
 
@@ -76,6 +78,8 @@ public class PrintClient {
                     System.out.println("Exiting the menu");
                     run = false;
                     break;
+                case 12:
+                    login(stub);
                 default:
                     System.out.println("Invalid choice. Please choose a valid option.");
                     break;
