@@ -7,10 +7,10 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class RunServer {
 
-    public static void main(String args[]) {
+    public static void main(String[] args) {
         try {
             // Instantiating the implementation class
-            PrintInterface obj = (PrintInterface) new PrintServer();
+            PrintInterface obj = new PrintServer();
 
             // Exporting the object of implementation class
             // (here we are exporting the remote object to the stub)
@@ -19,10 +19,10 @@ public class RunServer {
             // Binding the remote object (stub) in the registry
             Registry registry = LocateRegistry.getRegistry();
 
-            registry.rebind("PrintInterface", stub);
+            registry.rebind("printinterface.PrintInterface", stub);
             System.err.println("Server ready");
         } catch (Exception e) {
-            System.err.println("Server exception: " + e.toString());
+            System.err.println("Server exception: " + e);
             e.printStackTrace();
         }
     }

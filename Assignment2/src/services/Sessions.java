@@ -2,13 +2,22 @@ package services;
 
 import authentication.Authentication;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.security.SecureRandom;
-import java.util.Base64;
-import java.util.HashMap;
+import java.util.*;
 
 public class Sessions extends Authentication {
+
+    public Sessions(){
+
+        roleHierarchy.put("admin", List.of(new String[]{"admin", "manager", "user"}));
+        roleHierarchy.put("manager",List.of(new String[]{"manager", "user"}));
+        roleHierarchy.put("user",List.of(new String[]{"user"}));
+        System.out.println(roleHierarchy);
+    }
     private final HashMap<String,String> usersTokens = new HashMap<>();
     private final HashMap<String, Long> tokensExpiration = new HashMap<>();
     private static final long SESSION_TIMEOUT = 10*60*1000;
@@ -38,7 +47,7 @@ public class Sessions extends Authentication {
         tokensExpiration.remove(token);
     }
 
-    public boolean verifyActiveSession(String token,String operation){
+    public boolean verifyValidAccess(String token,String operation){
         createLogFile(usersTokens.get(token),operation);
         if(usersTokens.get(token) != null){
             if(tokensExpiration.get(token) != null & tokensExpiration.get(token) > System.currentTimeMillis()) {
@@ -59,4 +68,42 @@ public class Sessions extends Authentication {
         }
 
     }
+
+    public void readRolesFile(){
+        userRoleMap.clear();
+        String roles_file = "User_Roles.txt";
+        try (BufferedReader reader = new BufferedReader(new FileReader(roles_file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(":");
+                if (parts.length == 2) {
+                    String username = parts[0].trim();
+                    String role = parts[1].trim();
+                    userRoleMap.put(username, role);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // Example: Print user-role mapping
+        for (Map.Entry<String, String> entry : userRoleMap.entrySet()) {
+            System.out.println("User: " + entry.getKey() + ", Role: " + entry.getValue());
+        }
+    }
+
+    public boolean checkRole(String token,String required_role){
+        readRolesFile();
+        String username = getUsername(token);
+        String role = userRoleMap.get(username);
+        List<String> lowerRoles = roleHierarchy.get(role);
+        if(lowerRoles.contains(role)) return true;
+        else return false;
+    }
+
+
+
+
+    Map<String, String> userRoleMap = new HashMap<>();
+    Map<String, List<String>> roleHierarchy = new HashMap<>();
 }

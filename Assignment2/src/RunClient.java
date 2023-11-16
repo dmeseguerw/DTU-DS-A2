@@ -13,12 +13,12 @@ public class RunClient {
             Registry registry = LocateRegistry.getRegistry(null);
 
             // Looking up the registry for the remote object
-            PrintInterface stub = (PrintInterface) registry.lookup("PrintInterface");
+            PrintInterface stub = (PrintInterface) registry.lookup("printinterface.PrintInterface");
             PrintClient clientManager = new PrintClient();
             clientManager.UserMenu(stub);
 
         } catch (Exception e) {
-            System.err.println("Client exception: " + e.toString());
+            System.err.println("Client exception: " + e);
             e.printStackTrace();
         }
     }

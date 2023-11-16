@@ -59,7 +59,6 @@ public class Authentication {
 
     }
 
-
     private final String pwd_file = "hashed_PWDs.txt";
 
 }
