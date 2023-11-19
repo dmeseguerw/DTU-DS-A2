@@ -13,9 +13,10 @@ public class Sessions extends Authentication {
 
     public Sessions(){
 
-        roleHierarchy.put("admin", List.of(new String[]{"admin", "manager", "user"}));
-        roleHierarchy.put("manager",List.of(new String[]{"manager", "user"}));
+        roleHierarchy.put("manager", List.of(new String[]{"manager", "technician", "poweruser", "user"}));
+        roleHierarchy.put("poweruser", List.of(new String[]{"poweruser", "user"}));
         roleHierarchy.put("user",List.of(new String[]{"user"}));
+        roleHierarchy.put("technician",List.of(new String[]{"technician"}));
         System.out.println(roleHierarchy);
     }
     private final HashMap<String,String> usersTokens = new HashMap<>();
@@ -48,7 +49,7 @@ public class Sessions extends Authentication {
     }
 
     public boolean verifyValidAccess(String token,String operation){
-        createLogFile(usersTokens.get(token),operation);
+        createLogFile(usersTokens.get(token), operation);
         if(usersTokens.get(token) != null){
             if(tokensExpiration.get(token) != null & tokensExpiration.get(token) > System.currentTimeMillis()) {
                 return true; // Token is valid and not expired
@@ -61,8 +62,8 @@ public class Sessions extends Authentication {
     }
 
     public void createLogFile(String username,String operation)  {
-        try (FileWriter fileWriter = new FileWriter("LOGS/"+username+"_LOG.txt",true)) {
-            fileWriter.write(operation + " operation performed - Time: " + System.currentTimeMillis()+"\n");
+        try (FileWriter fileWriter = new FileWriter("logs/" + username + "_log.txt",true)) {
+            fileWriter.write("[" + operation + "]" + " operation performed - Time: " + System.currentTimeMillis()+"\n");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -71,7 +72,7 @@ public class Sessions extends Authentication {
 
     public void readRolesFile(){
         userRoleMap.clear();
-        String roles_file = "User_Roles.txt";
+        String roles_file = "src/user_roles.txt";
         try (BufferedReader reader = new BufferedReader(new FileReader(roles_file))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -92,17 +93,14 @@ public class Sessions extends Authentication {
         }
     }
 
-    public boolean checkRole(String token,String required_role){
+    public boolean checkRole(String token, List<String> required_role){
         readRolesFile();
         String username = getUsername(token);
         String role = userRoleMap.get(username);
-        List<String> lowerRoles = roleHierarchy.get(role);
-        if(lowerRoles.contains(role)) return true;
-        else return false;
+        ArrayList<String> user_roles = new ArrayList<>(roleHierarchy.get(role));
+        required_role = new ArrayList<>(required_role);
+        return user_roles.retainAll(required_role);
     }
-
-
-
 
     Map<String, String> userRoleMap = new HashMap<>();
     Map<String, List<String>> roleHierarchy = new HashMap<>();

@@ -5,7 +5,7 @@ import BCrypt.BCrypt;
 import java.io.*;
 
 public class PasswordGenerator {
-    private static final String pwd_file = "src/user_passwords_file.txt";
+    private static final String pwd_file = "src/user_passwords.txt";
 
     public static void hashPasswords() throws IOException {
         File f = new File(pwd_file);
