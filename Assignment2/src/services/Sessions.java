@@ -11,18 +11,22 @@ import java.util.*;
 
 public class Sessions extends Authentication {
 
-    public Sessions(){
+    private static final long SESSION_TIMEOUT = 10 * 60 * 1000;
+    private final HashMap<String, String> usersTokens = new HashMap<>();
+    private final HashMap<String, Long> tokensExpiration = new HashMap<>();
+    Map<String, String> userRoleMap = new HashMap<>();
+    Map<String, List<String>> roleHierarchy = new HashMap<>();
+
+    public Sessions() {
 
         roleHierarchy.put("manager", List.of(new String[]{"manager", "technician", "poweruser", "user"}));
         roleHierarchy.put("poweruser", List.of(new String[]{"poweruser", "user"}));
-        roleHierarchy.put("user",List.of(new String[]{"user"}));
-        roleHierarchy.put("technician",List.of(new String[]{"technician"}));
+        roleHierarchy.put("user", List.of(new String[]{"user"}));
+        roleHierarchy.put("technician", List.of(new String[]{"technician"}));
         System.out.println(roleHierarchy);
     }
-    private final HashMap<String,String> usersTokens = new HashMap<>();
-    private final HashMap<String, Long> tokensExpiration = new HashMap<>();
-    private static final long SESSION_TIMEOUT = 10*60*1000;
-    public String generateToken(){
+
+    public String generateToken() {
         SecureRandom secureRandom = new SecureRandom();
         byte[] randomBytes = new byte[32];
         secureRandom.nextBytes(randomBytes);
@@ -31,27 +35,27 @@ public class Sessions extends Authentication {
 
     }
 
-    public void addNewUserSession(String token, String username){
+    public void addNewUserSession(String token, String username) {
         System.out.println("New token added");
         usersTokens.put(token, username);
         long expTime = System.currentTimeMillis() + SESSION_TIMEOUT;
-        tokensExpiration.put(token,expTime);
+        tokensExpiration.put(token, expTime);
     }
 
-    public String getUsername(String token){
+    public String getUsername(String token) {
         return usersTokens.get(token);
     }
 
-    public void removeSessionToken(String token){
+    public void removeSessionToken(String token) {
         System.out.println("Session for user " + usersTokens.get(token) + " removed");
         usersTokens.remove(token);
         tokensExpiration.remove(token);
     }
 
-    public boolean verifyValidAccess(String token,String operation){
+    public boolean verifyValidAccess(String token, String operation) {
         createLogFile(usersTokens.get(token), operation);
-        if(usersTokens.get(token) != null){
-            if(tokensExpiration.get(token) != null & tokensExpiration.get(token) > System.currentTimeMillis()) {
+        if (usersTokens.get(token) != null) {
+            if (tokensExpiration.get(token) != null & tokensExpiration.get(token) > System.currentTimeMillis()) {
                 return true; // Token is valid and not expired
             }
             // Token is valid but expired
@@ -61,16 +65,16 @@ public class Sessions extends Authentication {
         return false; // Token is not valid
     }
 
-    public void createLogFile(String username,String operation)  {
-        try (FileWriter fileWriter = new FileWriter("logs/" + username + "_log.txt",true)) {
-            fileWriter.write("[" + operation + "]" + " operation performed - Time: " + System.currentTimeMillis()+"\n");
+    public void createLogFile(String username, String operation) {
+        try (FileWriter fileWriter = new FileWriter("logs/" + username + "_log.txt", true)) {
+            fileWriter.write("[" + operation + "]" + " operation performed - Time: " + System.currentTimeMillis() + "\n");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
     }
 
-    public void readRolesFile(){
+    public void readRolesFile() {
         userRoleMap.clear();
         String roles_file = "src/user_roles.txt";
         try (BufferedReader reader = new BufferedReader(new FileReader(roles_file))) {
@@ -93,7 +97,7 @@ public class Sessions extends Authentication {
         }
     }
 
-    public boolean checkRole(String token, List<String> required_role){
+    public boolean checkRole(String token, List<String> required_role) {
         readRolesFile();
         String username = getUsername(token);
         String role = userRoleMap.get(username);
@@ -101,7 +105,4 @@ public class Sessions extends Authentication {
         required_role = new ArrayList<>(required_role);
         return user_roles.retainAll(required_role);
     }
-
-    Map<String, String> userRoleMap = new HashMap<>();
-    Map<String, List<String>> roleHierarchy = new HashMap<>();
 }

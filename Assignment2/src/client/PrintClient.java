@@ -15,7 +15,7 @@ public class PrintClient {
         boolean run = true;
         System.out.println("Welcome to the printer server. Please login:");
         String sessionToken = login(stub);
-        if(sessionToken == null) {
+        if (sessionToken == null) {
             run = false;
             while (!run) {
                 System.out.println("Invalid credentials. Please login again:");
@@ -97,7 +97,7 @@ public class PrintClient {
         System.out.println("Enter password");
         String password = (new Scanner(System.in)).nextLine();  // Read user input
         sessionToken = stub.login(username, password);
-        if(sessionToken != null) System.out.println("Login successful. Welcome!");
+        if (sessionToken != null) System.out.println("Login successful. Welcome!");
         else System.out.println("Login failed. You suck!");
         return sessionToken;
     }
@@ -119,7 +119,7 @@ public class PrintClient {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Insert name of printer: ");
         String printer = scanner.next();
-        System.out.println(stub.queue(printer,sessionToken));
+        System.out.println(stub.queue(printer, sessionToken));
     }
 
     public void topQueue(PrintInterface stub) throws RemoteException {
@@ -130,27 +130,33 @@ public class PrintClient {
         int job = scanner.nextInt();
         System.out.println(stub.topQueue(printer, job, sessionToken));
     }
+
     public void start(PrintInterface stub) throws RemoteException {
         System.out.println(stub.start(sessionToken));
     }
+
     public void stop(PrintInterface stub) throws RemoteException {
         System.out.println(stub.stop(sessionToken));
     }
+
     public void restart(PrintInterface stub) throws RemoteException {
         System.out.println(stub.restart(sessionToken));
     }
+
     public void status(PrintInterface stub) throws RemoteException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Insert name of printer: ");
         String printer = scanner.next();
-        System.out.println(stub.status(printer,sessionToken));
+        System.out.println(stub.status(printer, sessionToken));
     }
+
     public void readConfig(PrintInterface stub) throws RemoteException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Insert name of parameter: ");
         String parameter = scanner.next();
-        System.out.println(stub.readConfig(parameter,sessionToken));
+        System.out.println(stub.readConfig(parameter, sessionToken));
     }
+
     public void setConfig(PrintInterface stub) throws RemoteException {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Insert name of parameter: ");

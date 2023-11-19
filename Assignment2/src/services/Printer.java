@@ -7,29 +7,29 @@ public class Printer {
     ArrayList<String> queue = new ArrayList<>();
     String status;
 
-    public Printer(String name){
+    public Printer(String name) {
         printerName = name;
         ArrayList<String> queue = new ArrayList<>();
         status = "ON";
     }
 
-    public String getstatus(){
+    public String getstatus() {
         return status;
     }
 
-    public ArrayList<String> getQueue(){
+    public ArrayList<String> getQueue() {
         return queue;
     }
 
-    public void addQueue(String job){
+    public void addQueue(String job) {
         queue.add(job);
     }
 
-    public String getPrinterName(){
+    public String getPrinterName() {
         return printerName;
     }
 
-    public void setPrinterName(String name){
+    public void setPrinterName(String name) {
         printerName = name;
     }
 
@@ -39,7 +39,7 @@ public class Printer {
         queue.add(0, temp);
     }
 
-    public void clearQueue(){
+    public void clearQueue() {
         queue.clear();
     }
 

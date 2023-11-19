@@ -14,9 +14,9 @@ public class PrintServer implements PrintInterface {
     Sessions session = new Sessions();
 
     public String login(String username, String password) throws FileNotFoundException, RemoteException {
-        if(session.authUser(username,password)){
+        if (session.authUser(username, password)) {
             String sessionToken = session.generateToken();
-            session.addNewUserSession(sessionToken,username);
+            session.addNewUserSession(sessionToken, username);
             return sessionToken;
         }
         return null;
@@ -24,7 +24,7 @@ public class PrintServer implements PrintInterface {
 
     public String logout(String token) throws RemoteException {
         String ret_statement = "Not logged in";
-        if(session.verifyValidAccess(token,"logout") & session.checkRole(token, List.of(new String[]{"user"}))) {
+        if (session.verifyValidAccess(token, "logout") & session.checkRole(token, List.of(new String[]{"user"}))) {
             session.removeSessionToken(token);
             ret_statement = "Logged out";
         }
@@ -35,10 +35,10 @@ public class PrintServer implements PrintInterface {
 
     public String print(String filename, String printer, String token) {
         String ret_statement = "Operation failed";
-        if(session.verifyValidAccess(token,"print") & session.checkRole(token,List.of(new String[]{"user"}))){
+        if (session.verifyValidAccess(token, "print") & session.checkRole(token, List.of(new String[]{"user"}))) {
             ret_statement = "";
-            for (Printer p : printers){
-                if(p.getPrinterName().equals(printer)){
+            for (Printer p : printers) {
+                if (p.getPrinterName().equals(printer)) {
                     p.addQueue(filename);
                     ret_statement = "File " + filename + " added on printer " + printer;
                     System.out.println(ret_statement);
@@ -54,7 +54,7 @@ public class PrintServer implements PrintInterface {
 
     public String queue(String printer, String token) {
         String queue = "Operation failed";
-        if(session.verifyValidAccess(token,"queue") & session.checkRole(token,List.of(new String[]{"user"}))){
+        if (session.verifyValidAccess(token, "queue") & session.checkRole(token, List.of(new String[]{"user"}))) {
             queue = "";
             for (Printer p : printers) {
                 if (p.getPrinterName().equals(printer)) {
@@ -73,7 +73,7 @@ public class PrintServer implements PrintInterface {
 
     public String topQueue(String printer, int job, String token) {
         String ret_statement = "Operation failed";
-        if(session.verifyValidAccess(token,"topQueue") & session.checkRole(token,List.of(new String[]{"poweruser"}))){
+        if (session.verifyValidAccess(token, "topQueue") & session.checkRole(token, List.of(new String[]{"poweruser"}))) {
             for (Printer p : printers) {
                 if (p.getPrinterName().equals(printer)) {
                     p.moveTopQueue(job);
@@ -90,7 +90,7 @@ public class PrintServer implements PrintInterface {
 
     public String start(String token) {
         String ret_statement = "Operation failed";
-        if(session.verifyValidAccess(token,"start") & session.checkRole(token, List.of(new String[]{"technician"}))){
+        if (session.verifyValidAccess(token, "start") & session.checkRole(token, List.of(new String[]{"technician"}))) {
             // Start database and initialize printers
             Printer p1 = new Printer("p1");
             Printer p2 = new Printer("p2");
@@ -110,7 +110,7 @@ public class PrintServer implements PrintInterface {
 
     public String stop(String token) {
         String ret_statement = "Operation failed";
-        if(session.verifyValidAccess(token,"stop") & session.checkRole(token,List.of(new String[]{"technician"}))){
+        if (session.verifyValidAccess(token, "stop") & session.checkRole(token, List.of(new String[]{"technician"}))) {
             ret_statement = "Print server stopped";
         }
         System.out.println(ret_statement);
@@ -122,7 +122,7 @@ public class PrintServer implements PrintInterface {
     public String restart(String token) {
         String ret_statement = "Operation failed";
 //        System.out.println("stops the print server, clears the print queue and starts the print server again");
-        if(session.verifyValidAccess(token,"restart") & session.checkRole(token,List.of(new String[]{"technician", "poweruser"}))){
+        if (session.verifyValidAccess(token, "restart") & session.checkRole(token, List.of(new String[]{"technician", "poweruser"}))) {
             for (Printer p : printers) {
                 p.clearQueue();
             }
@@ -137,7 +137,7 @@ public class PrintServer implements PrintInterface {
     public String status(String printer, String token) {
         String ret_statement = "Operation failed";
         System.out.println("prints status of printer on the user's display");
-        if(session.verifyValidAccess(token,"status") & session.checkRole(token,List.of(new String[]{"technician"}))){
+        if (session.verifyValidAccess(token, "status") & session.checkRole(token, List.of(new String[]{"technician"}))) {
             for (Printer p : printers) {
                 if (p.getPrinterName().equals(printer)) {
                     ret_statement = p.getstatus();
@@ -153,7 +153,7 @@ public class PrintServer implements PrintInterface {
 
     public String readConfig(String parameter, String token) {
         String ret_statement = "Operation failed";
-        if(session.verifyValidAccess(token,"readConfig") & session.checkRole(token,List.of(new String[]{"technician"}))){
+        if (session.verifyValidAccess(token, "readConfig") & session.checkRole(token, List.of(new String[]{"technician"}))) {
             ret_statement = "GET CONFIG FROM SERVER PRINTER";
         }
         System.out.println(ret_statement);
@@ -165,7 +165,7 @@ public class PrintServer implements PrintInterface {
 
     public String setConfig(String parameter, String value, String token) {
         String ret_statement = "Operation failed";
-        if(session.verifyValidAccess(token,"setConfig") & session.checkRole(token,List.of(new String[]{"technician"}))){
+        if (session.verifyValidAccess(token, "setConfig") & session.checkRole(token, List.of(new String[]{"technician"}))) {
             ret_statement = "GET CONFIG FROM SERVER PRINTER";
         }
         System.out.println(ret_statement);
