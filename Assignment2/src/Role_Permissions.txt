@@ -1,2 +1,0 @@
-admin:print,start,stop,topQueue,restart
-user:print
