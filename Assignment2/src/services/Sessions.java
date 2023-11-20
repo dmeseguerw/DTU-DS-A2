@@ -10,14 +10,6 @@ import java.security.SecureRandom;
 import java.util.*;
 
 public class Sessions extends Authentication {
-
-    public Sessions(){
-
-        roleHierarchy.put("admin", List.of(new String[]{"admin", "manager", "user"}));
-        roleHierarchy.put("manager",List.of(new String[]{"manager", "user"}));
-        roleHierarchy.put("user",List.of(new String[]{"user"}));
-        System.out.println(roleHierarchy);
-    }
     private final HashMap<String,String> usersTokens = new HashMap<>();
     private final HashMap<String, Long> tokensExpiration = new HashMap<>();
     private static final long SESSION_TIMEOUT = 10*60*1000;
@@ -69,7 +61,7 @@ public class Sessions extends Authentication {
 
     }
 
-    public void readRolesFile(){
+    public void readUserRolesFile(){
         userRoleMap.clear();
         String roles_file = "User_Roles.txt";
         try (BufferedReader reader = new BufferedReader(new FileReader(roles_file))) {
@@ -92,18 +84,55 @@ public class Sessions extends Authentication {
         }
     }
 
-    public boolean checkRole(String token,String required_role){
-        readRolesFile();
+    public boolean checkRole(String token, String operation){
+        // First we need to get the role from the username.
+        readUserRolesFile();
         String username = getUsername(token);
         String role = userRoleMap.get(username);
-        List<String> lowerRoles = roleHierarchy.get(role);
-        if(lowerRoles.contains(role)) return true;
-        else return false;
+
+        // Now we need to check if the role can perform the given operation.
+        readRolePermissions();
+        if(rolePermissions.get(role).contains(operation)) {
+            System.out.println("Role able to perform operation");
+            return true;
+        }
+        else {
+            System.out.println("FAIL: Role not able to perform operation");
+            return false;
+        }
+    }
+
+    public void readRolePermissions(){
+        rolePermissions.clear();
+        String roles_file = "Role_Permissions.txt";
+        try (BufferedReader reader = new BufferedReader(new FileReader(roles_file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(":");
+                if (parts.length == 2) {
+                    String role = parts[0].trim();
+                    String[] permissionsArray = parts[1].split(",");
+                    ArrayList<String> permissions = new ArrayList<>();
+
+                    for(String function : permissionsArray){
+                        permissions.add(function.trim());
+                    }
+
+                    rolePermissions.put(role, permissions);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        for (Map.Entry<String, ArrayList<String>> entry : rolePermissions.entrySet()) {
+            System.out.println("Role: " + entry.getKey() + ", Permissions: " + entry.getValue());
+        }
     }
 
 
 
 
     Map<String, String> userRoleMap = new HashMap<>();
-    Map<String, List<String>> roleHierarchy = new HashMap<>();
+    Map<String, ArrayList<String>> rolePermissions = new HashMap<>();
 }
