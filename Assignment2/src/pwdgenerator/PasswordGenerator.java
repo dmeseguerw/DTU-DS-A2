@@ -2,7 +2,10 @@ package pwdgenerator;
 
 import BCrypt.BCrypt;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class PasswordGenerator {
     private static final String pwd_file = "src/user_passwords.txt";

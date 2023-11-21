@@ -7,9 +7,11 @@ import java.security.SecureRandom;
 import java.util.*;
 
 public class Sessions extends Authentication {
+    private static final long SESSION_TIMEOUT = 10 * 60 * 1000;
     private final HashMap<String, String> usersTokens = new HashMap<>();
     private final HashMap<String, Long> tokensExpiration = new HashMap<>();
-    private static final long SESSION_TIMEOUT = 10 * 60 * 1000;
+    Map<String, String> userRoleMap = new HashMap<>();
+    Map<String, ArrayList<String>> rolePermissions = new HashMap<>();
 
     public String generateToken() {
         SecureRandom secureRandom = new SecureRandom();
@@ -58,7 +60,6 @@ public class Sessions extends Authentication {
         }
 
     }
-
 
     public boolean checkRole(String token, String operation) {
         // First we need to get the role from the username.
@@ -128,7 +129,6 @@ public class Sessions extends Authentication {
         }
     }
 
-
     public void editUserRoles(String user_id, String new_role) {
         readRolePermissions();
 
@@ -149,8 +149,4 @@ public class Sessions extends Authentication {
         }
 
     }
-
-
-    Map<String, String> userRoleMap = new HashMap<>();
-    Map<String, ArrayList<String>> rolePermissions = new HashMap<>();
 }
