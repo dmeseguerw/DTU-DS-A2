@@ -155,7 +155,11 @@ public class Sessions extends Authentication {
 
         ArrayList<String> permissions_for_role = rolePermissions.get(role_id);
 
-        if(permissions_for_role.contains(new_permission)){
+        if (permissions_for_role == null) {
+            permissions_for_role = new ArrayList<>();
+        }
+
+        if (permissions_for_role.contains(new_permission)) {
             permissions_for_role.remove(new_permission);
         } else {
             permissions_for_role.add(new_permission);
@@ -167,7 +171,7 @@ public class Sessions extends Authentication {
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(permissions_file))) {
             for (Map.Entry<String, ArrayList<String>> entry : rolePermissions.entrySet()) {
-                writer.write(entry.getKey() + ":" + entry.getValue());
+                writer.write(entry.getKey() + ":" + String.join(",", entry.getValue()));
                 writer.newLine();
             }
         } catch (IOException e) {
