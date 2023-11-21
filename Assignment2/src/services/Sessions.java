@@ -130,7 +130,7 @@ public class Sessions extends Authentication {
     }
 
     public void editUserRoles(String user_id, String new_role) {
-        readRolePermissions();
+        readUserRolesFile();
 
         if (Objects.equals(new_role, "delete")) {
             userRoleMap.remove(user_id);
@@ -141,6 +141,32 @@ public class Sessions extends Authentication {
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(roles_file))) {
             for (Map.Entry<String, String> entry : userRoleMap.entrySet()) {
+                writer.write(entry.getKey() + ":" + entry.getValue());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    public void editRolePermissions(String role_id, String new_permission) {
+        readRolePermissions();
+
+        ArrayList<String> permissions_for_role = rolePermissions.get(role_id);
+
+        if(permissions_for_role.contains(new_permission)){
+            permissions_for_role.remove(new_permission);
+        } else {
+            permissions_for_role.add(new_permission);
+        }
+
+        rolePermissions.put(role_id, permissions_for_role);
+
+        String permissions_file = "src/role_permissions.txt";
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(permissions_file))) {
+            for (Map.Entry<String, ArrayList<String>> entry : rolePermissions.entrySet()) {
                 writer.write(entry.getKey() + ":" + entry.getValue());
                 writer.newLine();
             }

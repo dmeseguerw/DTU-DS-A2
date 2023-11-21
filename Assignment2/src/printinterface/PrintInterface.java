@@ -30,4 +30,7 @@ public interface PrintInterface extends Remote {
 
     String editUserRoles(String user_id, String new_role, String token) throws RemoteException;
 
+    String editRolePermissions(String role_id, String new_permission, String token) throws RemoteException;
+
+
 }

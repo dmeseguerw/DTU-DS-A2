@@ -39,6 +39,7 @@ public class PrintClient {
             System.out.println("11. Exit");
             System.out.println("12. Login");
             System.out.println("13 Edit user roles");
+            System.out.println("14 Edit roles permissions");
 
             System.out.print("Enter your choice: ");
 
@@ -84,6 +85,9 @@ public class PrintClient {
                     break;
                 case 13:
                     editUserRoles(stub);
+                    break;
+                case 14:
+                    editRolePermissions(stub);
                     break;
                 default:
                     System.out.println("Invalid choice. Please choose a valid option.");
@@ -172,10 +176,19 @@ public class PrintClient {
 
     public void editUserRoles(PrintInterface stub) throws RemoteException {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Insert name of user you want to change permissions: ");
+        System.out.println("Insert name of user you want to change role: ");
         String user_id = scanner.next();
-        System.out.println("Insert role name or type 'delete' to remove the user: ");
+        System.out.println("Insert new role name or type 'delete' to remove the user: ");
         String new_role = scanner.next();
         System.out.println(stub.editUserRoles(user_id, new_role, sessionToken));
+    }
+
+    public void editRolePermissions(PrintInterface stub) throws RemoteException {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Insert name of the role you want to change permissions: ");
+        String role_id = scanner.next();
+        System.out.println("Insert permission name you want to add/delete: ");
+        String new_permission = scanner.next();
+        System.out.println(stub.editRolePermissions(role_id, new_permission, sessionToken));
     }
 }
