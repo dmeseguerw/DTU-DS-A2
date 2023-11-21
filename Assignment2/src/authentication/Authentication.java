@@ -12,6 +12,8 @@ import java.util.Map;
 
 public class Authentication {
 
+    private final String pwd_file = "hashed_PWDs.txt";
+
     public Map<String, String> getPwdHashMap() throws RemoteException, FileNotFoundException {
         // Create hash
         Map<String, String> map = new HashMap<String, String>();
@@ -23,7 +25,7 @@ public class Authentication {
             String line = null;
 
             // Populate hash map
-            while ((line = br.readLine()) != null){
+            while ((line = br.readLine()) != null) {
                 String[] parts = line.split(":");
 
                 String curr_username = parts[0].trim();
@@ -32,33 +34,29 @@ public class Authentication {
                 if (!curr_username.isEmpty() && !curr_password.isEmpty())
                     map.put(curr_username, curr_password);
             }
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
         return map;
     }
 
-    public  boolean authUser(String username, String password) throws RemoteException, FileNotFoundException {
+    public boolean authUser(String username, String password) throws RemoteException, FileNotFoundException {
         Map<String, String> pwd_hash = getPwdHashMap();
 
-        if(!pwd_hash.containsKey(username)){
+        if (!pwd_hash.containsKey(username)) {
             System.out.println("User not found");
             return false;
         }
 
         String user_password = pwd_hash.get(username);
-        if (BCrypt.checkpw(password,user_password)) {
+        if (BCrypt.checkpw(password, user_password)) {
             System.out.println("User authenticated correctly");
             return true;
-        }
-        else{
+        } else {
             System.out.println("User authentication failed");
             return false;
         }
 
     }
-
-    private final String pwd_file = "hashed_PWDs.txt";
 
 }

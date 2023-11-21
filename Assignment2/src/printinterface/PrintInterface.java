@@ -9,13 +9,28 @@ public interface PrintInterface extends Remote {
     String login(String username, String password) throws RemoteException, FileNotFoundException;
 
     String logout(String token) throws RemoteException;
+
     String print(String filename, String printer, String token) throws RemoteException;
+
     String queue(String printer, String token) throws RemoteException;
+
     String topQueue(String printer, int job, String token) throws RemoteException;
+
     String start(String token) throws RemoteException;
+
     String stop(String token) throws RemoteException;
+
     String restart(String token) throws RemoteException;
+
     String status(String printer, String token) throws RemoteException;
+
     String readConfig(String parameter, String token) throws RemoteException;
+
     String setConfig(String parameter, String value, String token) throws RemoteException;
+
+    String editUserRoles(String user_id, String new_role, String token) throws RemoteException;
+
+    String editRolePermissions(String role_id, String new_permission, String token) throws RemoteException;
+
+
 }
