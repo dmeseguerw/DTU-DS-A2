@@ -2,29 +2,17 @@ package services;
 
 import authentication.Authentication;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.security.SecureRandom;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Sessions extends Authentication {
-
-    private static final long SESSION_TIMEOUT = 10 * 60 * 1000;
     private final HashMap<String, String> usersTokens = new HashMap<>();
     private final HashMap<String, Long> tokensExpiration = new HashMap<>();
-    Map<String, String> userRoleMap = new HashMap<>();
-    Map<String, List<String>> roleHierarchy = new HashMap<>();
-
-    public Sessions() {
-
-        roleHierarchy.put("manager", List.of(new String[]{"manager", "technician", "poweruser", "user"}));
-        roleHierarchy.put("poweruser", List.of(new String[]{"poweruser", "user"}));
-        roleHierarchy.put("user", List.of(new String[]{"user"}));
-        roleHierarchy.put("technician", List.of(new String[]{"technician"}));
-        System.out.println(roleHierarchy);
-    }
+    private static final long SESSION_TIMEOUT = 10 * 60 * 1000;
 
     public String generateToken() {
         SecureRandom secureRandom = new SecureRandom();
@@ -66,15 +54,33 @@ public class Sessions extends Authentication {
     }
 
     public void createLogFile(String username, String operation) {
-        try (FileWriter fileWriter = new FileWriter("logs/" + username + "_log.txt", true)) {
-            fileWriter.write("[" + operation + "]" + " operation performed - Time: " + System.currentTimeMillis() + "\n");
+        try (FileWriter fileWriter = new FileWriter("LOGS/" + username + "_LOG.txt", true)) {
+            fileWriter.write(operation + " operation performed - Time: " + System.currentTimeMillis() + "\n");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
 
     }
 
-    public void readRolesFile() {
+
+    public boolean checkRole(String token, String operation) {
+        // First we need to get the role from the username.
+        readUserRolesFile();
+        String username = getUsername(token);
+        String role = userRoleMap.get(username);
+
+        // Now we need to check if the role can perform the given operation.
+        readRolePermissions();
+        if (rolePermissions.get(role).contains(operation)) {
+            System.out.println("Role able to perform operation");
+            return true;
+        } else {
+            System.out.println("FAIL: Role not able to perform operation");
+            return false;
+        }
+    }
+
+    public void readUserRolesFile() {
         userRoleMap.clear();
         String roles_file = "src/user_roles.txt";
         try (BufferedReader reader = new BufferedReader(new FileReader(roles_file))) {
@@ -97,12 +103,35 @@ public class Sessions extends Authentication {
         }
     }
 
-    public boolean checkRole(String token, List<String> required_role) {
-        readRolesFile();
-        String username = getUsername(token);
-        String role = userRoleMap.get(username);
-        ArrayList<String> user_roles = new ArrayList<>(roleHierarchy.get(role));
-        required_role = new ArrayList<>(required_role);
-        return user_roles.retainAll(required_role);
+    public void readRolePermissions() {
+        rolePermissions.clear();
+        String permissions_file = "src/role_permissions.txt";
+        try (BufferedReader reader = new BufferedReader(new FileReader(permissions_file))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] parts = line.split(":");
+                if (parts.length == 2) {
+                    String role = parts[0].trim();
+                    String[] permissionsArray = parts[1].split(",");
+                    ArrayList<String> permissions = new ArrayList<>();
+
+                    for (String function : permissionsArray) {
+                        permissions.add(function.trim());
+                    }
+
+                    rolePermissions.put(role, permissions);
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        for (Map.Entry<String, ArrayList<String>> entry : rolePermissions.entrySet()) {
+            System.out.println("Role: " + entry.getKey() + ", Permissions: " + entry.getValue());
+        }
     }
+
+
+    Map<String, String> userRoleMap = new HashMap<>();
+    Map<String, ArrayList<String>> rolePermissions = new HashMap<>();
 }

@@ -8,8 +8,7 @@ public class PasswordGenerator {
     private static final String pwd_file = "src/user_passwords.txt";
 
     public static void hashPasswords() throws IOException {
-        File f = new File(pwd_file);
-        BufferedReader br = new BufferedReader((new FileReader(f)));
+        BufferedReader br = new BufferedReader((new FileReader(pwd_file)));
         FileWriter hash_f = new FileWriter("hashed_PWDs.txt", true);
         String line = null;
 
