@@ -170,4 +170,15 @@ public class PrintServer implements PrintInterface {
         System.out.println(ret_statement);
         return ret_statement;
     }
+
+
+    public String editUserRoles(String user_id, String new_role, String token) {
+        String ret_statement = "Operation failed";
+        if(session.verifyValidAccess(token,"editRoles") & session.checkRole(token,"editRoles")){
+            ret_statement = "EDIT USER ROLES";
+            session.editUserRoles(user_id, new_role);
+        }
+        System.out.println(ret_statement);
+        return ret_statement;
+    }
 }

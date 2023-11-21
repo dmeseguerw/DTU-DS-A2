@@ -4,10 +4,7 @@ import authentication.Authentication;
 
 import java.io.*;
 import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class Sessions extends Authentication {
     private final HashMap<String, String> usersTokens = new HashMap<>();
@@ -129,6 +126,28 @@ public class Sessions extends Authentication {
         for (Map.Entry<String, ArrayList<String>> entry : rolePermissions.entrySet()) {
             System.out.println("Role: " + entry.getKey() + ", Permissions: " + entry.getValue());
         }
+    }
+
+
+    public void editUserRoles(String user_id, String new_role) {
+        readRolePermissions();
+
+        if (Objects.equals(new_role, "delete")) {
+            userRoleMap.remove(user_id);
+        } else {
+            userRoleMap.put(user_id, new_role);
+        }
+        String roles_file = "src/user_roles.txt";
+
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(roles_file))) {
+            for (Map.Entry<String, String> entry : userRoleMap.entrySet()) {
+                writer.write(entry.getKey() + ":" + entry.getValue());
+                writer.newLine();
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
 

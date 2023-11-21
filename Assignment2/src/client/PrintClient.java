@@ -38,6 +38,7 @@ public class PrintClient {
             System.out.println("10. Logout");
             System.out.println("11. Exit");
             System.out.println("12. Login");
+            System.out.println("13 Edit user roles");
 
             System.out.print("Enter your choice: ");
 
@@ -80,6 +81,9 @@ public class PrintClient {
                     break;
                 case 12:
                     login(stub);
+                    break;
+                case 13:
+                    editUserRoles(stub);
                     break;
                 default:
                     System.out.println("Invalid choice. Please choose a valid option.");
@@ -164,5 +168,14 @@ public class PrintClient {
         System.out.println("Insert new value: ");
         String value = scanner.next();
         System.out.println(stub.setConfig(parameter, value, sessionToken));
+    }
+
+    public void editUserRoles(PrintInterface stub) throws RemoteException {
+        Scanner scanner = new Scanner(System.in);
+        System.out.println("Insert name of user you want to change permissions: ");
+        String user_id = scanner.next();
+        System.out.println("Insert role name: ");
+        String new_role = scanner.next();
+        System.out.println(stub.editUserRoles(user_id, new_role, sessionToken));
     }
 }

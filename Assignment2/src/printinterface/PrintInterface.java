@@ -27,4 +27,7 @@ public interface PrintInterface extends Remote {
     String readConfig(String parameter, String token) throws RemoteException;
 
     String setConfig(String parameter, String value, String token) throws RemoteException;
+
+    String editUserRoles(String user_id, String new_role, String token) throws RemoteException;
+
 }
