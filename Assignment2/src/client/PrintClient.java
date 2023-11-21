@@ -174,7 +174,7 @@ public class PrintClient {
         Scanner scanner = new Scanner(System.in);
         System.out.println("Insert name of user you want to change permissions: ");
         String user_id = scanner.next();
-        System.out.println("Insert role name: ");
+        System.out.println("Insert role name or type 'delete' to remove the user: ");
         String new_role = scanner.next();
         System.out.println(stub.editUserRoles(user_id, new_role, sessionToken));
     }
