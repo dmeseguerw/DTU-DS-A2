@@ -1,4 +1,0 @@
-manager:print,queue,start,stop,topQueue,restart,status,readConfig,setConfig,editRoles,editPermissions
-technician:start,stop,restart,status,readConfig,setConfig
-user:print,queue
-poweruser:print,topQueue,queue,restart

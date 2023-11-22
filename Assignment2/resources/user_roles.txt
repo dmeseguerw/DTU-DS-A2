@@ -1,7 +1,0 @@
-bob:technician
-alice:manager
-george:user
-cecilia:poweruser
-david:user
-fred:user
-erica:user
