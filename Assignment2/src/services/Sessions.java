@@ -1,8 +1,10 @@
 package services;
 
 import authentication.Authentication;
+import server.PrintServer;
 
 import java.io.*;
+import java.lang.reflect.Method;
 import java.security.SecureRandom;
 import java.util.*;
 
@@ -10,8 +12,7 @@ public class Sessions extends Authentication {
     private static final long SESSION_TIMEOUT = 10 * 60 * 1000;
     private final HashMap<String, String> usersTokens = new HashMap<>();
     private final HashMap<String, Long> tokensExpiration = new HashMap<>();
-    Map<String, String> userRoleMap = new HashMap<>();
-    Map<String, ArrayList<String>> rolePermissions = new HashMap<>();
+    Map<String, ArrayList<String>> userMethodsPermissions = new HashMap<>();
 
     public String generateToken() {
         SecureRandom secureRandom = new SecureRandom();
@@ -53,7 +54,7 @@ public class Sessions extends Authentication {
     }
 
     public void createLogFile(String username, String operation) {
-        try (FileWriter fileWriter = new FileWriter("resources/LOGS/" + username + "_LOG.txt", true)) {
+        try (FileWriter fileWriter = new FileWriter("resources/" + username + "_LOG.txt", true)) {
             fileWriter.write(operation + " operation performed - Time: " + System.currentTimeMillis() + "\n");
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -61,51 +62,41 @@ public class Sessions extends Authentication {
 
     }
 
-    public boolean checkRole(String token, String operation) {
-        // First we need to get the role from the username.
-        readUserRolesFile();
-        String username = getUsername(token);
-        String role = userRoleMap.get(username);
-        System.out.println("\nUser: " + username + ", Role: " + role);
-        // Now we need to check if the role can perform the given operation.
-        readRolePermissions();
-        System.out.println("Role: " + role + ", Permissions: " + rolePermissions.get(role));
-        if (rolePermissions.get(role).contains(operation)) {
-            System.out.println("Role able to perform operation: " + operation);
-            return true;
-        } else {
-            System.out.println("FAIL: Role not able to perform operation -> " + operation);
+
+    public boolean checkMethod(String token, String methodName)
+    {
+        readPermissionFile();
+        ArrayList<String> retrievedUserMethods = userMethodsPermissions.get(getUsername(token));
+        boolean authorization = false;
+        if (retrievedUserMethods == null)
+        {
+            System.out.println("No permissions for the user");
             return false;
         }
-    }
-
-    public void readUserRolesFile() {
-        userRoleMap.clear();
-        String roles_file = "resources/user_roles.txt";
-        try (BufferedReader reader = new BufferedReader(new FileReader(roles_file))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(":");
-                if (parts.length == 2) {
-                    String username = parts[0].trim();
-                    String role = parts[1].trim();
-                    userRoleMap.put(username, role);
+        else
+        {
+            for (String retrievedMethodName:retrievedUserMethods)
+            {
+                if (retrievedMethodName.contains(methodName))
+                {
+                    authorization = true;
+                    break;
                 }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+            return authorization;
         }
     }
 
-    public void readRolePermissions() {
-        rolePermissions.clear();
-        String permissions_file = "resources/role_permissions.txt";
+    private void readPermissionFile()
+    {
+        userMethodsPermissions.clear();
+        String permissions_file = "resources/userMethods_permissions.txt";
         try (BufferedReader reader = new BufferedReader(new FileReader(permissions_file))) {
             String line;
             while ((line = reader.readLine()) != null) {
                 String[] parts = line.split(":");
                 if (parts.length == 2) {
-                    String role = parts[0].trim();
+                    String username = parts[0].trim();
                     String[] permissionsArray = parts[1].split(",");
                     ArrayList<String> permissions = new ArrayList<>();
 
@@ -113,56 +104,50 @@ public class Sessions extends Authentication {
                         permissions.add(operation.trim());
                     }
 
-                    rolePermissions.put(role, permissions);
+                    userMethodsPermissions.put(username, permissions);
                 }
             }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
 
-    public void editUserRoles(String user_id, String new_role) {
-        readUserRolesFile();
-
-        if (Objects.equals(new_role, "delete")) {
-            userRoleMap.remove(user_id);
-        } else {
-            userRoleMap.put(user_id, new_role);
+    public void editUserMethods(String username, String methodToAdd)
+    {
+        ArrayList<String> userPermissions = userMethodsPermissions.get(username);
+        if (userPermissions == null)
+        {
+            userPermissions = new ArrayList<>();
+            userPermissions.add(methodToAdd);
+            userMethodsPermissions.put(username,userPermissions);
         }
-        String roles_file = "resources/user_roles.txt";
-
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(roles_file))) {
-            for (Map.Entry<String, String> entry : userRoleMap.entrySet()) {
-                writer.write(entry.getKey() + ":" + entry.getValue());
-                writer.newLine();
+        else
+        {
+            boolean present = false;
+            for (String methodInUserPermissions:userPermissions)
+            {
+                if (methodInUserPermissions.contains(methodToAdd))
+                {
+                    present=true;
+                    break;
+                }
             }
-        } catch (IOException e) {
-            e.printStackTrace();
+            if (!present)
+            {
+                System.out.println("added");
+                userPermissions.add(methodToAdd);
+                userMethodsPermissions.put(username,userPermissions);
+            }
+            else
+                System.out.println("Permission already exists.");
+
         }
 
-    }
-
-    public void editRolePermissions(String role_id, String new_permission) {
-        readRolePermissions();
-
-        ArrayList<String> permissions_for_role = rolePermissions.get(role_id);
-
-        if (permissions_for_role == null) {
-            permissions_for_role = new ArrayList<>();
-        }
-
-        if (permissions_for_role.contains(new_permission)) {
-            permissions_for_role.remove(new_permission);
-        } else {
-            permissions_for_role.add(new_permission);
-        }
-
-        rolePermissions.put(role_id, permissions_for_role);
-
-        String permissions_file = "resources/role_permissions.txt";
+        String permissions_file = "resources/userMethods_permissions.txt";
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(permissions_file))) {
-            for (Map.Entry<String, ArrayList<String>> entry : rolePermissions.entrySet()) {
+            for (Map.Entry<String, ArrayList<String>> entry : userMethodsPermissions.entrySet()) {
                 writer.write(entry.getKey() + ":" + String.join(",", entry.getValue()));
                 writer.newLine();
             }
@@ -170,7 +155,41 @@ public class Sessions extends Authentication {
             e.printStackTrace();
         }
 
-        System.out.println("Role " + role_id + " permissions modified to: " + rolePermissions.get(role_id));
-
+        System.out.println("User " + username + " has access to a new method: " + methodToAdd);
+    }
+    public ArrayList<String> getUserMissingMethods(String username)
+    {
+        readPermissionFile();
+        ArrayList<String> currentUserMethods = userMethodsPermissions.get(username);
+        PrintServer printServer = new PrintServer();
+        Method[] printServerMethods = printServer.getClass().getDeclaredMethods();
+        ArrayList<String> missingUserMethods = new ArrayList<>();
+        if (currentUserMethods ==null)
+        {
+            for (Method method:printServerMethods)
+            {
+                missingUserMethods.add(method.getName());
+            }
+        }
+        else
+        {
+            for (Method method:printServerMethods)
+            {
+                boolean present = false;
+                for (String methodName:currentUserMethods)
+                {
+                    if (method.getName().contains(methodName))
+                    {
+                        present=true;
+                        break;
+                    }
+                }
+                if (!present)
+                {
+                    missingUserMethods.add(method.getName());
+                }
+            }
+        }
+        return missingUserMethods;
     }
 }

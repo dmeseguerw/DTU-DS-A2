@@ -34,7 +34,7 @@ public class PrintServer implements PrintInterface {
 
     public String print(String filename, String printer, String token) {
         String ret_statement = "Operation failed";
-        if (session.verifyValidAccess(token, "print") & session.checkRole(token, "print")) {
+        if (session.verifyValidAccess(token, "print") & session.checkMethod(token, "print")) {
             ret_statement = "";
             for (Printer p : printers) {
                 if (p.getPrinterName().equals(printer)) {
@@ -53,7 +53,7 @@ public class PrintServer implements PrintInterface {
 
     public String queue(String printer, String token) {
         String queue = "Operation failed";
-        if (session.verifyValidAccess(token, "queue") & session.checkRole(token, "queue")) {
+        if (session.verifyValidAccess(token, "queue") & session.checkMethod(token, "queue")) {
             queue = "";
             for (Printer p : printers) {
                 if (p.getPrinterName().equals(printer)) {
@@ -72,7 +72,7 @@ public class PrintServer implements PrintInterface {
 
     public String topQueue(String printer, int job, String token) {
         String ret_statement = "Operation failed";
-        if (session.verifyValidAccess(token, "topQueue") & session.checkRole(token, "topQueue")) {
+        if (session.verifyValidAccess(token, "topQueue") & session.checkMethod(token, "topQueue")) {
             for (Printer p : printers) {
                 if (p.getPrinterName().equals(printer)) {
                     p.moveTopQueue(job);
@@ -89,7 +89,7 @@ public class PrintServer implements PrintInterface {
 
     public String start(String token) {
         String ret_statement = "Operation failed";
-        if (session.verifyValidAccess(token, "start") & session.checkRole(token, "start")) {
+        if (session.verifyValidAccess(token, "start") & session.checkMethod(token, "start")) {
             // Start database and initialize printers
             Printer p1 = new Printer("p1");
             Printer p2 = new Printer("p2");
@@ -109,7 +109,7 @@ public class PrintServer implements PrintInterface {
 
     public String stop(String token) {
         String ret_statement = "Operation failed";
-        if (session.verifyValidAccess(token, "stop") & session.checkRole(token, "stop")) {
+        if (session.verifyValidAccess(token, "stop") & session.checkMethod(token, "stop")) {
             ret_statement = "Print server stopped";
         }
         System.out.println(ret_statement);
@@ -121,7 +121,7 @@ public class PrintServer implements PrintInterface {
     public String restart(String token) {
         String ret_statement = "Operation failed";
 //        System.out.println("stops the print server, clears the print queue and starts the print server again");
-        if (session.verifyValidAccess(token, "restart") & session.checkRole(token, "restart")) {
+        if (session.verifyValidAccess(token, "restart") & session.checkMethod(token, "restart")) {
             for (Printer p : printers) {
                 p.clearQueue();
             }
@@ -136,7 +136,7 @@ public class PrintServer implements PrintInterface {
     public String status(String printer, String token) {
         String ret_statement = "Operation failed";
         System.out.println("prints status of printer on the user's display");
-        if (session.verifyValidAccess(token, "status") & session.checkRole(token, "status")) {
+        if (session.verifyValidAccess(token, "status") & session.checkMethod(token, "status")) {
             for (Printer p : printers) {
                 if (p.getPrinterName().equals(printer)) {
                     ret_statement = p.getstatus();
@@ -152,7 +152,7 @@ public class PrintServer implements PrintInterface {
 
     public String readConfig(String parameter, String token) {
         String ret_statement = "Operation failed";
-        if (session.verifyValidAccess(token, "readConfig") & session.checkRole(token, "readConfig")) {
+        if (session.verifyValidAccess(token, "readConfig") & session.checkMethod(token, "readConfig")) {
             ret_statement = "GET CONFIG FROM SERVER PRINTER";
         }
         System.out.println(ret_statement);
@@ -164,32 +164,29 @@ public class PrintServer implements PrintInterface {
 
     public String setConfig(String parameter, String value, String token) {
         String ret_statement = "Operation failed";
-        if (session.verifyValidAccess(token, "setConfig") & session.checkRole(token, "setConfig")) {
+        if (session.verifyValidAccess(token, "setConfig") & session.checkMethod(token, "setConfig")) {
             ret_statement = "GET CONFIG FROM SERVER PRINTER";
         }
         System.out.println(ret_statement);
         return ret_statement;
     }
 
-
-    public String editUserRoles(String user_id, String new_role, String token) {
+    public String editUserMethods(String username, String methodToAdd, String token)
+    {
         String ret_statement = "Operation failed";
-        if (session.verifyValidAccess(token, "editRoles") & session.checkRole(token, "editRoles")) {
-            session.editUserRoles(user_id, new_role);
-            ret_statement = "User " + user_id + " has new role as: " + new_role;
+        if (session.verifyValidAccess(token, "editUserMethods") & session.checkMethod(token, "editUserMethods")) {
+            session.editUserMethods(username, methodToAdd);
+            ret_statement = "User " + username + " has new method: " + methodToAdd;
         }
-        System.out.println(ret_statement);
         return ret_statement;
     }
-
-    public String editRolePermissions(String role_id, String new_permission, String token) {
-        String ret_statement = "Operation failed";
-        if (session.verifyValidAccess(token, "editPermissions") & session.checkRole(token, "editPermissions")) {
-            System.out.println("Modifying permission to " + new_permission + " to role " + role_id);
-            session.editRolePermissions(role_id, new_permission);
-            ret_statement = "Operation successful";
+    public ArrayList<String> getUserMissingMethods(String username, String token)
+    {
+        ArrayList<String> ret_statement = new ArrayList<>();
+        if (session.verifyValidAccess(token, "getUserMissingMethods") & session.checkMethod(token, "getUserMissingMethods")) {
+            ret_statement = session.getUserMissingMethods(username);
+            System.out.println(username);
         }
-        System.out.println(ret_statement);
         return ret_statement;
     }
 }

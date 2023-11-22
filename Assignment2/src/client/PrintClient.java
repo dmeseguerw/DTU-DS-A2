@@ -4,6 +4,7 @@ import printinterface.PrintInterface;
 
 import java.io.FileNotFoundException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class PrintClient {
@@ -38,8 +39,7 @@ public class PrintClient {
             System.out.println("10. Logout");
             System.out.println("11. Exit");
             System.out.println("12. Login");
-            System.out.println("13 Edit user roles");
-            System.out.println("14 Edit roles permissions");
+            System.out.println("13 Edit user methods");
 
             System.out.print("Enter your choice: ");
 
@@ -84,10 +84,7 @@ public class PrintClient {
                     login(stub);
                     break;
                 case 13:
-                    editUserRoles(stub);
-                    break;
-                case 14:
-                    editRolePermissions(stub);
+                    editUserMethods(stub);
                     break;
                 default:
                     System.out.println("Invalid choice. Please choose a valid option.");
@@ -174,21 +171,28 @@ public class PrintClient {
         System.out.println(stub.setConfig(parameter, value, sessionToken));
     }
 
-    public void editUserRoles(PrintInterface stub) throws RemoteException {
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Insert name of user you want to change role: ");
-        String user_id = scanner.next();
-        System.out.println("Insert new role name or type 'delete' to remove the user: ");
-        String new_role = scanner.next();
-        System.out.println(stub.editUserRoles(user_id, new_role, sessionToken));
-    }
+    public void editUserMethods(PrintInterface stub) throws RemoteException
+    {
 
-    public void editRolePermissions(PrintInterface stub) throws RemoteException {
         Scanner scanner = new Scanner(System.in);
-        System.out.println("Insert name of the role you want to change permissions: ");
-        String role_id = scanner.next();
-        System.out.println("Insert permission name you want to add/delete: ");
-        String new_permission = scanner.next();
-        System.out.println(stub.editRolePermissions(role_id, new_permission, sessionToken));
+        System.out.println("Please input username to add method to: ");
+        String selectedUsername = scanner.nextLine();
+        ArrayList<String> userMissingMethods = stub.getUserMissingMethods(selectedUsername,sessionToken);
+
+        if (userMissingMethods.isEmpty())
+        {
+            System.out.println("Operation Failed");
+        }
+        else{
+        int incrementor = 1;
+        for (String methodName:userMissingMethods)
+        {
+            System.out.println(incrementor+" "+methodName);
+            incrementor++;
+        }
+        System.out.println("Please insert method number to add to user: ");
+        int methodNumberSelection = scanner.nextInt();
+        stub.editUserMethods(selectedUsername, userMissingMethods.get(methodNumberSelection - 1),sessionToken);
+        }
     }
 }

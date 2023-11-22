@@ -3,6 +3,7 @@ package printinterface;
 import java.io.FileNotFoundException;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 
 // Creating Remote interface for our application
 public interface PrintInterface extends Remote {
@@ -28,9 +29,9 @@ public interface PrintInterface extends Remote {
 
     String setConfig(String parameter, String value, String token) throws RemoteException;
 
-    String editUserRoles(String user_id, String new_role, String token) throws RemoteException;
+    String editUserMethods(String username, String methodToAdd, String token) throws RemoteException;
 
-    String editRolePermissions(String role_id, String new_permission, String token) throws RemoteException;
+    ArrayList<String> getUserMissingMethods(String username, String token) throws RemoteException;
 
 
 }
