@@ -40,7 +40,7 @@ public class PrintServer implements PrintInterface {
                 if (p.getPrinterName().equals(printer)) {
                     p.addQueue(filename);
                     ret_statement = "File " + filename + " added on printer " + printer;
-                    System.out.println(ret_statement);
+//                    System.out.println(ret_statement);
                     break;
                 }
             }
@@ -175,8 +175,8 @@ public class PrintServer implements PrintInterface {
     public String editUserRoles(String user_id, String new_role, String token) {
         String ret_statement = "Operation failed";
         if (session.verifyValidAccess(token, "editRoles") & session.checkRole(token, "editRoles")) {
-            ret_statement = "EDIT USER ROLES";
             session.editUserRoles(user_id, new_role);
+            ret_statement = "User " + user_id + " has new role as: " + new_role;
         }
         System.out.println(ret_statement);
         return ret_statement;
@@ -185,8 +185,9 @@ public class PrintServer implements PrintInterface {
     public String editRolePermissions(String role_id, String new_permission, String token) {
         String ret_statement = "Operation failed";
         if (session.verifyValidAccess(token, "editPermissions") & session.checkRole(token, "editPermissions")) {
-            ret_statement = "EDIT ROLE PERMISSIONS";
+            System.out.println("Modifying permission to " + new_permission + " to role " + role_id);
             session.editRolePermissions(role_id, new_permission);
+            ret_statement = "Operation successful";
         }
         System.out.println(ret_statement);
         return ret_statement;

@@ -1,7 +1,7 @@
-alice:manager
 bob:technician
+alice:manager
+george:user
 cecilia:poweruser
 david:user
-erica:user
 fred:user
-george:user
+erica:user

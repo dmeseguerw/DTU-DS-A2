@@ -8,11 +8,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 
 public class PasswordGenerator {
-    private static final String pwd_file = "src/user_passwords.txt";
+    private static final String pwd_file = "./resources/user_passwords.txt";
 
     public static void hashPasswords() throws IOException {
         BufferedReader br = new BufferedReader((new FileReader(pwd_file)));
-        FileWriter hash_f = new FileWriter("hashed_PWDs.txt", true);
+        FileWriter hash_f = new FileWriter("./hashed_PWDs.txt", true);
         String line = null;
 
         // Populate hash map

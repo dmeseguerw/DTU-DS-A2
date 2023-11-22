@@ -53,7 +53,7 @@ public class Sessions extends Authentication {
     }
 
     public void createLogFile(String username, String operation) {
-        try (FileWriter fileWriter = new FileWriter("LOGS/" + username + "_LOG.txt", true)) {
+        try (FileWriter fileWriter = new FileWriter("resources/LOGS/" + username + "_LOG.txt", true)) {
             fileWriter.write(operation + " operation performed - Time: " + System.currentTimeMillis() + "\n");
         } catch (IOException e) {
             throw new RuntimeException(e);
@@ -66,21 +66,22 @@ public class Sessions extends Authentication {
         readUserRolesFile();
         String username = getUsername(token);
         String role = userRoleMap.get(username);
-
+        System.out.println("\nUser: " + username + ", Role: " + role);
         // Now we need to check if the role can perform the given operation.
         readRolePermissions();
+        System.out.println("Role: " + role + ", Permissions: " + rolePermissions.get(role));
         if (rolePermissions.get(role).contains(operation)) {
-            System.out.println("Role able to perform operation");
+            System.out.println("Role able to perform operation: " + operation);
             return true;
         } else {
-            System.out.println("FAIL: Role not able to perform operation");
+            System.out.println("FAIL: Role not able to perform operation -> " + operation);
             return false;
         }
     }
 
     public void readUserRolesFile() {
         userRoleMap.clear();
-        String roles_file = "src/user_roles.txt";
+        String roles_file = "resources/user_roles.txt";
         try (BufferedReader reader = new BufferedReader(new FileReader(roles_file))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -94,16 +95,11 @@ public class Sessions extends Authentication {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-        // Example: Print user-role mapping
-        for (Map.Entry<String, String> entry : userRoleMap.entrySet()) {
-            System.out.println("User: " + entry.getKey() + ", Role: " + entry.getValue());
-        }
     }
 
     public void readRolePermissions() {
         rolePermissions.clear();
-        String permissions_file = "src/role_permissions.txt";
+        String permissions_file = "resources/role_permissions.txt";
         try (BufferedReader reader = new BufferedReader(new FileReader(permissions_file))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -113,8 +109,8 @@ public class Sessions extends Authentication {
                     String[] permissionsArray = parts[1].split(",");
                     ArrayList<String> permissions = new ArrayList<>();
 
-                    for (String function : permissionsArray) {
-                        permissions.add(function.trim());
+                    for (String operation : permissionsArray) {
+                        permissions.add(operation.trim());
                     }
 
                     rolePermissions.put(role, permissions);
@@ -122,10 +118,6 @@ public class Sessions extends Authentication {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }
-
-        for (Map.Entry<String, ArrayList<String>> entry : rolePermissions.entrySet()) {
-            System.out.println("Role: " + entry.getKey() + ", Permissions: " + entry.getValue());
         }
     }
 
@@ -137,7 +129,7 @@ public class Sessions extends Authentication {
         } else {
             userRoleMap.put(user_id, new_role);
         }
-        String roles_file = "src/user_roles.txt";
+        String roles_file = "resources/user_roles.txt";
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(roles_file))) {
             for (Map.Entry<String, String> entry : userRoleMap.entrySet()) {
@@ -167,7 +159,7 @@ public class Sessions extends Authentication {
 
         rolePermissions.put(role_id, permissions_for_role);
 
-        String permissions_file = "src/role_permissions.txt";
+        String permissions_file = "resources/role_permissions.txt";
 
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(permissions_file))) {
             for (Map.Entry<String, ArrayList<String>> entry : rolePermissions.entrySet()) {
@@ -177,6 +169,8 @@ public class Sessions extends Authentication {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        System.out.println("Role " + role_id + " permissions modified to: " + rolePermissions.get(role_id));
 
     }
 }
