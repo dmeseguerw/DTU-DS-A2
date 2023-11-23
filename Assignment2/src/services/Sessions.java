@@ -135,7 +135,6 @@ public class Sessions extends Authentication {
             }
             if (!present)
             {
-                System.out.println("added");
                 userPermissions.add(methodToAdd);
                 userMethodsPermissions.put(username,userPermissions);
             }

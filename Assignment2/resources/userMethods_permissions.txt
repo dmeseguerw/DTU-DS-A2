@@ -1,2 +1,7 @@
-bob:readConfig,status,restart,print
-alice:editUserMethods,getUserMissingMethods
+alice:editUserMethods,getUserMissingMethods,status,queue,start,stop,print,readConfig,topQueue,login,setConfig,logout
+bob:readConfig,status,restart,stop,login,logout,setConfig,start
+cecilia:queue,print,restart,topQueue
+david:queue,print
+erica:queue,print
+fred:queue,print
+george:queue,print

@@ -185,7 +185,6 @@ public class PrintServer implements PrintInterface {
         ArrayList<String> ret_statement = new ArrayList<>();
         if (session.verifyValidAccess(token, "getUserMissingMethods") & session.checkMethod(token, "getUserMissingMethods")) {
             ret_statement = session.getUserMissingMethods(username);
-            System.out.println(username);
         }
         return ret_statement;
     }

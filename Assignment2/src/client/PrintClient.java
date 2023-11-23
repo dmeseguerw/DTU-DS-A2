@@ -173,26 +173,43 @@ public class PrintClient {
 
     public void editUserMethods(PrintInterface stub) throws RemoteException
     {
+        boolean pleaseRun = true;
 
-        Scanner scanner = new Scanner(System.in);
-        System.out.println("Please input username to add method to: ");
-        String selectedUsername = scanner.nextLine();
-        ArrayList<String> userMissingMethods = stub.getUserMissingMethods(selectedUsername,sessionToken);
+            Scanner scanner = new Scanner(System.in);
+            System.out.println("Please input username to add method to: ");
+            String selectedUsername = scanner.nextLine();
+        while (pleaseRun)
+        {
+            ArrayList<String> userMissingMethods = stub
+                .getUserMissingMethods(selectedUsername, sessionToken);
 
-        if (userMissingMethods.isEmpty())
-        {
-            System.out.println("Operation Failed");
-        }
-        else{
-        int incrementor = 1;
-        for (String methodName:userMissingMethods)
-        {
-            System.out.println(incrementor+" "+methodName);
-            incrementor++;
-        }
-        System.out.println("Please insert method number to add to user: ");
-        int methodNumberSelection = scanner.nextInt();
-        stub.editUserMethods(selectedUsername, userMissingMethods.get(methodNumberSelection - 1),sessionToken);
+            if (userMissingMethods.isEmpty())
+            {
+                System.out.println("Operation Failed");
+                pleaseRun = false;
+            }
+            else
+            {
+                int incrementor = 1;
+                for (String methodName : userMissingMethods)
+                {
+                    System.out.println(incrementor + " " + methodName);
+                    incrementor++;
+                }
+                System.out.println("Please insert method number to add to user or 0 to cancel: ");
+                int methodNumberSelection = scanner.nextInt();
+                if (methodNumberSelection != 0)
+                {
+                    stub.editUserMethods(selectedUsername, userMissingMethods.get(methodNumberSelection - 1),
+                        sessionToken);
+                }
+                else
+                {
+                    pleaseRun = false;
+                }
+
+            }
+
         }
     }
 }
